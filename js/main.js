@@ -52,15 +52,15 @@ const getRandomNumber = (from, to) => {
 };
 
 // Возвращает уникальное рандомное число из диапазона.
-// exeptions - массив с повторными значениями
-const getUniqueRandomNumber = (from, to, exeptions) => {
+// arrayOfExeptions - массив с повторными значениями
+const getUniqueRandomNumber = (from, to, arrayOfExeptions) => {
   const randomInteger = getRandomNumber(from, to);
 
-  if (exeptions.includes(randomInteger)) {
-    return getUniqueRandomNumber(from, to, exeptions);
+  if (arrayOfExeptions.includes(randomInteger)) {
+    return getUniqueRandomNumber(from, to, arrayOfExeptions);
   }
 
-  exeptions.push(randomInteger);
+  arrayOfExeptions.push(randomInteger);
 
   return randomInteger;
 };
@@ -85,17 +85,17 @@ const getPostIdCounter = createCounter();
 const getPhotoCounter = createCounter();
 
 // Массив для хранения уникальных идентификаторов комментариев
-const ids = [];
+const commentIds = [];
 
 // Генерирует объект - комментарий
 const createComment = () => ({
-  id: getUniqueRandomNumber(0, 1000, ids),
+  id: getUniqueRandomNumber(0, 1000, commentIds),
   avatar: `img/avatar-${getRandomNumber(1, 6)}.svg`,
   message: getRandomArrayElement(MESSAGES),
   name: getRandomArrayElement(NAMES),
 });
 
-// Генерирует объект - описание к фотографии
+// Генерирует объект - пост
 const createPost = () => {
   const commentCount = getRandomNumber(1, 5);
 
@@ -108,7 +108,7 @@ const createPost = () => {
   };
 };
 
-// Генерирует массив постов.
+// Генерирует массив постов
 const createPostList = (arrayLength) => Array.from({length: arrayLength}, createPost);
 
 createPostList(POST_COUNT);
