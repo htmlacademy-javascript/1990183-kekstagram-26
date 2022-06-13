@@ -52,15 +52,15 @@ const getRandomNumber = (from, to) => {
 };
 
 // Возвращает уникальное рандомное число из диапазона.
-// arrayOfExсeptions - массив с повторными значениями
-const getUniqueRandomNumber = (from, to, arrayOfExсeptions) => {
+// exсeptions - массив с повторными значениями
+const getUniqueRandomNumber = (from, to, exсeptions) => {
   const randomInteger = getRandomNumber(from, to);
 
-  if (arrayOfExсeptions.includes(randomInteger)) {
-    return getUniqueRandomNumber(from, to, arrayOfExсeptions);
+  if (exсeptions.includes(randomInteger)) {
+    return getUniqueRandomNumber(from, to, exсeptions);
   }
 
-  arrayOfExсeptions.push(randomInteger);
+  exсeptions.push(randomInteger);
 
   return randomInteger;
 };
