@@ -47,12 +47,9 @@ const getPostIdCounter = createCounter();
 // Счетчик для фотографий
 const getPhotoCounter = createCounter();
 
-// Массив для хранения уникальных идентификаторов комментариев
-const commentIds = [];
-
 // Генерирует объект - комментарий
-const createComment = () => ({
-  id: getUniqueRandomNumber(0, 1000, commentIds),
+const createComment = (ids) => ({
+  id: getUniqueRandomNumber(0, 1000, ids),
   avatar: `img/avatar-${getRandomNumber(1, 6)}.svg`,
   message: getRandomArrayElement(MESSAGES),
   name: getRandomArrayElement(NAMES),
@@ -61,13 +58,15 @@ const createComment = () => ({
 // Генерирует объект - пост
 const createPost = () => {
   const commentCount = getRandomNumber(1, 5);
+  // Массив для хранения уникальных идентификаторов комментариев
+  const commentIds = [];
 
   return {
     id: getPostIdCounter(),
     url: `photos/${getPhotoCounter()}.jpg`,
     description: getRandomArrayElement(DESCRIPTIONS),
     likes: getRandomNumber(5, 200),
-    comments: Array.from({length: commentCount}, createComment),
+    comments: Array.from({length: commentCount}, () => createComment(commentIds)),
   };
 };
 
