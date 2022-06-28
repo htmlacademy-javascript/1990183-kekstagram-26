@@ -1,7 +1,7 @@
 import {
   getRandomNumber,
-  getUniqueRandomNumber,
   getRandomArrayElement,
+  createUniqueRandomGenerator,
   createCounter
 } from './util.js';
 
@@ -48,8 +48,8 @@ const getPostIdCounter = createCounter();
 const getPhotoCounter = createCounter();
 
 // Генерирует объект - комментарий
-const createComment = (ids) => ({
-  id: getUniqueRandomNumber(0, 1000, ids),
+const createComment = (id) => ({
+  id: id,
   avatar: `img/avatar-${getRandomNumber(1, 6)}.svg`,
   message: getRandomArrayElement(MESSAGES),
   name: getRandomArrayElement(NAMES),
@@ -58,15 +58,14 @@ const createComment = (ids) => ({
 // Генерирует объект - пост
 const createPost = () => {
   const commentCount = getRandomNumber(1, 5);
-  // Массив для хранения уникальных идентификаторов комментариев
-  const commentIds = [];
+  const getCommentId = createUniqueRandomGenerator(0, 1000);
 
   return {
     id: getPostIdCounter(),
     url: `photos/${getPhotoCounter()}.jpg`,
     description: getRandomArrayElement(DESCRIPTIONS),
     likes: getRandomNumber(5, 200),
-    comments: Array.from({length: commentCount}, () => createComment(commentIds)),
+    comments: Array.from({length: commentCount}, () => createComment(getCommentId())),
   };
 };
 

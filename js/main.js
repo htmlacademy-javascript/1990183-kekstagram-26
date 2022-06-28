@@ -1,3 +1,6 @@
 import { createPostList } from './data.js';
+import { renderThumbnails } from './thumbnails.js';
 
-createPostList();
+const posts = createPostList();
+
+renderThumbnails(posts);
