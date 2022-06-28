@@ -28,39 +28,11 @@ const getUniqueRandomNumber = (from, to, exсeptions) => {
   return randomInteger;
 };
 
-// Возвращает уникальное рандомное число из диапазона.
-const createUniqueRandomGenerator = (from, to) => {
-  const numbers = [];
-
-  return () => {
-    if (numbers.length >= (to - from + 1)) {
-      throw new Error('В заданном диапазоне закончились уникальные числа');
-    }
-
-    let number = getRandomNumber(from, to);
-
-    while (numbers.includes(number)) {
-      number = getRandomNumber(from, to);
-    }
-
-    numbers.push(number);
-
-    return number;
-  };
-};
-
 // Возвращает рандомный элемент из массива
 const getRandomArrayElement = (array) => {
   const index = getRandomNumber(0, array.length - 1);
 
   return array[index];
-};
-
-// Счетчик, работающий на замыкании
-const createCounter = () => {
-  let i = 1;
-
-  return () => i++;
 };
 
 // Проверяет строку на соответствие максимальной длине
@@ -70,7 +42,5 @@ export {
   getRandomNumber,
   getUniqueRandomNumber,
   getRandomArrayElement,
-  createUniqueRandomGenerator,
-  createCounter,
   isMaxLengthValid
 };

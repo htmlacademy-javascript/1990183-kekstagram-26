@@ -1,8 +1,6 @@
 import {
   getRandomNumber,
   getRandomArrayElement,
-  createUniqueRandomGenerator,
-  createCounter
 } from './util.js';
 
 const POST_COUNT = 25;
@@ -42,34 +40,28 @@ const MESSAGES = [
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!',
 ];
 
-// Счетчик для идентификаторов постов
-const getPostIdCounter = createCounter();
-// Счетчик для фотографий
-const getPhotoCounter = createCounter();
-
 // Генерирует объект - комментарий
 const createComment = (id) => ({
-  id: id,
+  id: id + 1,
   avatar: `img/avatar-${getRandomNumber(1, 6)}.svg`,
   message: getRandomArrayElement(MESSAGES),
   name: getRandomArrayElement(NAMES),
 });
 
 // Генерирует объект - пост
-const createPost = () => {
+const createPost = (index) => {
   const commentCount = getRandomNumber(1, 5);
-  const getCommentId = createUniqueRandomGenerator(0, 1000);
 
   return {
-    id: getPostIdCounter(),
-    url: `photos/${getPhotoCounter()}.jpg`,
+    id: index + 1,
+    url: `photos/${index + 1}.jpg`,
     description: getRandomArrayElement(DESCRIPTIONS),
     likes: getRandomNumber(5, 200),
-    comments: Array.from({length: commentCount}, () => createComment(getCommentId())),
+    comments: Array.from({length: commentCount}, (_, commentIndex) => createComment(commentIndex)),
   };
 };
 
 // Генерирует массив постов
-const createPostList = () => Array.from({length: POST_COUNT}, createPost);
+const createPostList = () => Array.from({length: POST_COUNT}, (_, index) => createPost(index));
 
 export { createPostList };
