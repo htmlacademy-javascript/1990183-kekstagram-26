@@ -21,9 +21,6 @@ const toggleCssClasses = () => {
   document.body.classList.toggle(BODY_CLASS);
 };
 
-// Проверяет открыто модальное окно или нет
-const isModalOpened = () => !modalElement.classList.contains(HIDDEN_CLASS);
-
 // Отрисовать список комментариев
 const renderCommentList = (comments) => {
   const commentListFragment = document.createDocumentFragment();
@@ -54,27 +51,35 @@ const updateModalData = (post) => {
   renderCommentList(post.comments);
 };
 
-// Открыть модальное окно
-const openModal = (post) => {
-  updateModalData(post);
-  toggleCssClasses();
-};
-
 // Закрыть модальное окно
 const closeModal = () => {
   toggleCssClasses();
 };
 
+// Закрыть модальное окно по нажатию ESC
+const closeModalByEscHandler = (event) => {
+  if (event.key === 'Escape') {
+    closeModal();
+  }
+};
+
+// Открыть модальное окно
+const openModal = (post) => {
+  updateModalData(post);
+  toggleCssClasses();
+
+  document.addEventListener(
+    'keydown',
+    closeModalByEscHandler,
+    { once: true }
+  );
+};
+
 // Обработчик события клика по кнопке "закрыть"
 buttonCloseElement.addEventListener('click', () => {
   closeModal();
-});
 
-// Закрыть модальное окно по нажатию ESC
-document.addEventListener('keydown', (event) => {
-  if (event.key === 'Escape' && isModalOpened()) {
-    closeModal();
-  }
+  document.removeEventListener('keydown', closeModalByEscHandler);
 });
 
 export { openModal };
