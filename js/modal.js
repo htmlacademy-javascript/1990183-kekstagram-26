@@ -1,3 +1,5 @@
+import { isEscapeKey } from './util.js';
+
 const HIDDEN_CLASS = 'hidden';
 const BODY_CLASS = 'modal-open';
 
@@ -57,8 +59,8 @@ const closeModal = () => {
 };
 
 // Закрыть модальное окно по нажатию ESC
-const closeModalByEscHandler = (event) => {
-  if (event.key === 'Escape') {
+const modalEscKeydownHandler = (event) => {
+  if (isEscapeKey(event)) {
     closeModal();
   }
 };
@@ -70,7 +72,7 @@ const openModal = (post) => {
 
   document.addEventListener(
     'keydown',
-    closeModalByEscHandler,
+    modalEscKeydownHandler,
     { once: true }
   );
 };
@@ -79,7 +81,7 @@ const openModal = (post) => {
 buttonCloseElement.addEventListener('click', () => {
   closeModal();
 
-  document.removeEventListener('keydown', closeModalByEscHandler);
+  document.removeEventListener('keydown', modalEscKeydownHandler);
 });
 
 export { openModal };

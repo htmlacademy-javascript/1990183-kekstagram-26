@@ -38,9 +38,13 @@ const getRandomArrayElement = (array) => {
 // Проверяет строку на соответствие максимальной длине
 const isMaxLengthValid = (string, maxLength) => (string.length <= maxLength);
 
+// Проверяет нажата ли клавиша Escape
+const isEscapeKey = (event) => (event.key === 'Escape');
+
 export {
   getRandomNumber,
   getUniqueRandomNumber,
   getRandomArrayElement,
+  isEscapeKey,
   isMaxLengthValid
 };
