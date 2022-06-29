@@ -9,6 +9,7 @@ const renderThumbnails = (posts) => {
     const likesElement = thumbnailElement.querySelector('.picture__likes');
     const commentsElement = thumbnailElement.querySelector('.picture__comments');
 
+    thumbnailElement.dataset.id = post.id;
     imageElement.src = post.url;
     imageElement.alt = post.description;
     likesElement.textContent = post.likes;
