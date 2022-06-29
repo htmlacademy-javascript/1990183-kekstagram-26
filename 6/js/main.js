@@ -15,7 +15,7 @@ document.addEventListener('click', (event) => {
   if (postElement) {
     event.preventDefault();
 
-    const postId = +postElement.dataset.id;
+    const postId = parseInt(postElement.dataset.id, 10);
     const currentPost = posts.find((post) => (post.id === postId));
 
     openModal(currentPost);

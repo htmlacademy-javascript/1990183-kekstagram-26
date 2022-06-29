@@ -1,3 +1,6 @@
+const HIDDEN_CLASS = 'hidden';
+const BODY_CLASS = 'modal-open';
+
 const modalElement = document.querySelector('.big-picture');
 const buttonCloseElement = modalElement.querySelector('#picture-cancel');
 const imageElement = modalElement.querySelector('.big-picture__img img');
@@ -10,20 +13,16 @@ const commentCountBlockElement = modalElement.querySelector('.social__comment-co
 const commentCountElement = modalElement.querySelector('.comments-count');
 const commentLoaderElement = modalElement.querySelector('.comments-loader');
 
-const hiddenClass = 'hidden';
-const bodyClass = 'modal-open';
-
 // Добавить/удалить css-классы в разметке для показа/скрытия модального окна
 const toggleCssClasses = () => {
-  commentCountBlockElement.classList.toggle(hiddenClass);
-  commentLoaderElement.classList.toggle(hiddenClass);
-  modalElement.classList.toggle(hiddenClass);
-  document.body.classList.toggle(bodyClass);
+  commentCountBlockElement.classList.toggle(HIDDEN_CLASS);
+  commentLoaderElement.classList.toggle(HIDDEN_CLASS);
+  modalElement.classList.toggle(HIDDEN_CLASS);
+  document.body.classList.toggle(BODY_CLASS);
 };
 
 // Проверяет открыто модальное окно или нет
-const isModalClosed = () => modalElement.classList.contains(hiddenClass);
-const isModalOpened = () => !isModalClosed();
+const isModalOpened = () => !modalElement.classList.contains(HIDDEN_CLASS);
 
 // Отрисовать список комментариев
 const renderCommentList = (comments) => {
