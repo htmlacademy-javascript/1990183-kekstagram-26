@@ -55,19 +55,19 @@ const validate = (form) => {
 
   pristine.addValidator(
     hashtagsFieldElement,
-    (value) => isValidHashtags(value),
+    isValidHashtags,
     ErrorMessage.HASHTAG_FORMAT
   );
 
   pristine.addValidator(
     hashtagsFieldElement,
-    (value) => isValidHashtagsCount(value),
+    isValidHashtagsCount,
     ErrorMessage.HASHTAG_COUNT
   );
 
   pristine.addValidator(
     hashtagsFieldElement,
-    (value) => isHashtagsUnique(value),
+    isHashtagsUnique,
     ErrorMessage.HASHTAG_DUPLICATION
   );
 
