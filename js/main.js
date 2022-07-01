@@ -1,6 +1,7 @@
 import { createPostList } from './data.js';
 import { renderThumbnails } from './thumbnails.js';
-import { openModal } from './modal.js';
+import { openPostModal } from './post-view.js';
+import './form.js';
 
 // Генерация данных для списка постов
 const posts = createPostList();
@@ -18,6 +19,6 @@ document.addEventListener('click', (event) => {
     const postId = parseInt(postElement.dataset.id, 10);
     const currentPost = posts.find((post) => (post.id === postId));
 
-    openModal(currentPost);
+    openPostModal(currentPost);
   }
 });
