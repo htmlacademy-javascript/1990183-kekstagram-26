@@ -1,6 +1,7 @@
 import { isEscapeKey } from './util.js';
 import { toggleModalClasses } from './modal.js';
 import { validate } from './validation.js';
+import { createScaleEditor } from './scale-editor.js';
 
 const uploadFileElement = document.querySelector('#upload-file');
 const uploadFormElement = document.querySelector('#upload-select-image');
@@ -54,3 +55,6 @@ fieldsElements.forEach((field) => {
 
 // Валидация формы
 validate(uploadFormElement);
+
+// Изменение масштаба загружаемого изображения
+createScaleEditor(uploadFormElement);
