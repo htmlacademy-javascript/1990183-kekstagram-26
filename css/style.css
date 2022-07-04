@@ -1408,3 +1408,20 @@ main {
 .hidden {
   display: none;
 }
+
+.form-text-error { 
+  color: #ff8f8e;
+  text-transform: none;
+}
+.text__hashtags + .form-text-error {
+  margin: -10px 0 10px;
+}
+.text__description + .form-text-error {
+  margin: 10px 0 0;
+}
+
+.has-danger .text__hashtags,
+.has-danger .text__description {
+  border-color: #ff7675;
+  background-color: #ffdcdc;;
+}
