@@ -126,7 +126,7 @@ effectListElement.addEventListener('change', (event) => {
     setImageClass(imageElement, newFilter, currentFilter);
     currentFilter = newFilter;
 
-    if (currentFilter === 'none') {
+    if (currentFilter === DEFAULT_FILTER) {
       resetFilter();
     } else {
       setFilter(currentFilter);
