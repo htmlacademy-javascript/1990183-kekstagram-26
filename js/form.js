@@ -2,7 +2,7 @@ import { isEscapeKey } from './util.js';
 import { toggleModalClasses } from './modal.js';
 import { validate } from './validation.js';
 import { createScaleEditor } from './scale-editor.js';
-import { createFilterEditor } from './filter-editor.js';
+import './filter-editor.js';
 
 const uploadFileElement = document.querySelector('#upload-file');
 const uploadFormElement = document.querySelector('#upload-select-image');
@@ -59,6 +59,3 @@ validate(uploadFormElement);
 
 // Изменение масштаба загружаемого изображения
 createScaleEditor(uploadFormElement);
-
-// Наложение фильтра на загружаемое изображение
-createFilterEditor(uploadFormElement);
