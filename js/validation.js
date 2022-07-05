@@ -12,7 +12,15 @@ const ErrorMessage = {
 };
 
 // Получить массив хэштегов из строки
-const getHashtagsFromField = (string) => string.trim().split(' ');
+const getHashtagsFromField = (string) => {
+  string = string.trim();
+
+  if (string.length === 0) {
+    return [];
+  }
+
+  return string.split(' ');
+};
 
 const hashtagRegExp = /^#[A-Za-zА-Яа-яЁё0-9]{1,19}$/;
 // Проверяет, является ли один хэштег валидным
@@ -42,16 +50,16 @@ const isHashtagsUnique = (value) => {
 };
 
 // Провалидировать форму
-const validate = (form) => {
-  const pristine = new Pristine(form, {
+const validate = (formElement) => {
+  const pristine = new Pristine(formElement, {
     classTo: 'img-upload__field-wrapper',
     errorClass: 'has-danger',
     errorTextParent: 'img-upload__field-wrapper',
     errorTextTag: 'div',
     errorTextClass: 'form-text-error' ,
   }, false);
-  const hashtagsFieldElement = form.querySelector('[name="hashtags"]');
-  const commentFieldElement = form.querySelector('[name="description"]');
+  const hashtagsFieldElement = formElement.querySelector('[name="hashtags"]');
+  const commentFieldElement = formElement.querySelector('[name="description"]');
 
   pristine.addValidator(
     hashtagsFieldElement,
@@ -78,18 +86,18 @@ const validate = (form) => {
   );
 
   // Обработчик события отправки формы
-  form.addEventListener('submit', (event) => {
+  formElement.addEventListener('submit', (event) => {
     event.preventDefault();
 
     const isValid = pristine.validate();
 
     if (isValid) {
-      form.submit();
+      formElement.submit();
     }
   });
 
   // Обработчик события сброса формы
-  form.addEventListener('reset', () => {
+  formElement.addEventListener('reset', () => {
     pristine.reset();
   });
 };
