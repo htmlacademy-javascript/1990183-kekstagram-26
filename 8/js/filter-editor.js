@@ -1,3 +1,5 @@
+const DEFAULT_FILTER = 'none';
+
 // Настройки фильтров
 const Filter = {
   CHROME : {
@@ -30,15 +32,19 @@ const Filter = {
   },
 };
 
+const formElement = document.querySelector('#upload-select-image');
+const imageElement = formElement.querySelector('.img-upload__preview img');
+const effectListElement = formElement.querySelector('.effects__list');
+const sliderFieldsetElement = formElement.querySelector('.img-upload__effect-level');
+const levelFieldElement = sliderFieldsetElement.querySelector('.effect-level__value');
+const sliderElement = sliderFieldsetElement.querySelector('.effect-level__slider');
+
 // Текущее название фильтра,
 // по умолчанию выбран "Оригинал"
-let currentFilter = 'none';
+let currentFilter = DEFAULT_FILTER;
 
-// Получить указанный параметр фильтра
-const getFilterOption = (filterName, optionName) => Filter[filterName.toUpperCase()][optionName];
-
-// Возвращает конфигурацию слайдера по умолчанию
-const createDefaultConfig = () => ({
+// Конфигурация слайдера
+const sliderConfig = {
   start: 100,
   range: {
     'min': 0,
@@ -50,7 +56,10 @@ const createDefaultConfig = () => ({
     to: (value) => value,
     from: (value) => parseFloat(value),
   },
-});
+};
+
+// Получить указанный параметр фильтра
+const getFilterOption = (filterName, optionName) => Filter[filterName.toUpperCase()][optionName];
 
 // Установить новые значения конфигурации слайдера
 const setConfigOption = (config, optionName, optionValue) => {
@@ -62,81 +71,71 @@ const setConfigOption = (config, optionName, optionValue) => {
 const getImageMofifierClass = (modifier) => `effects__preview--${modifier}`;
 
 // Установить для фотографии css-класс, соответстующий фильтру
-const setImageClass = (imageElement, newModifier, oldModifier) => {
+const setImageClass = (photoElement, newModifier, oldModifier) => {
   const newClass = getImageMofifierClass(newModifier);
   const oldClass = getImageMofifierClass(oldModifier);
 
-  imageElement.classList.add(newClass);
-  imageElement.classList.remove(oldClass);
+  photoElement.classList.add(newClass);
+  photoElement.classList.remove(oldClass);
 };
 
-// Функция инициализации наложения фильтров
-const createFilterEditor = (formElement) => {
-  const imageElement = formElement.querySelector('.img-upload__preview img');
-  const effectListElement = formElement.querySelector('.effects__list');
-  const sliderFieldsetElement = formElement.querySelector('.img-upload__effect-level');
-  const levelFieldElement = sliderFieldsetElement.querySelector('.effect-level__value');
-  const sliderElement = sliderFieldsetElement.querySelector('.effect-level__slider');
+// Установить "Оригинал"
+const resetFilter = () => {
+  sliderElement.setAttribute('disabled', true);
+  sliderFieldsetElement.classList.add('hidden');
+  levelFieldElement.value = '';
+  imageElement.style.filter = 'none';
+  currentFilter = DEFAULT_FILTER;
+};
 
-  // Конфигурация слайдера
-  const sliderConfig = createDefaultConfig();
+// Установить фильтр
+const setFilter = (filterName) => {
+  const max = getFilterOption(filterName, 'MAX');
+  const step = getFilterOption(filterName, 'STEP');
 
-  // Установить "Оригинал"
-  const setOriginal = () => {
-    sliderElement.setAttribute('disabled', true);
-    sliderFieldsetElement.classList.add('hidden');
-    levelFieldElement.value = '';
-    imageElement.style.filter = 'none';
-  };
+  setConfigOption(sliderConfig, 'start', max);
+  setConfigOption(sliderConfig, 'range', { 'min': 0, 'max': max });
+  setConfigOption(sliderConfig, 'step', step);
 
-  // Установить фильтр
-  const setFilter = (filterName) => {
-    const max = getFilterOption(filterName, 'MAX');
-    const step = getFilterOption(filterName, 'STEP');
+  sliderElement.removeAttribute('disabled');
+  sliderElement.noUiSlider.updateOptions(sliderConfig);
 
-    setConfigOption(sliderConfig, 'start', max);
-    setConfigOption(sliderConfig, 'range', { 'min': 0, 'max': max });
-    setConfigOption(sliderConfig, 'step', step);
+  sliderFieldsetElement.classList.remove('hidden');
+};
 
-    sliderElement.removeAttribute('disabled');
-    sliderElement.noUiSlider.updateOptions(sliderConfig);
+// Инициализировать слайдер
+noUiSlider.create(sliderElement, sliderConfig);
 
-    sliderFieldsetElement.classList.remove('hidden');
-  };
+// Обработчик события update слайдера
+sliderElement.noUiSlider.on('update', () => {
+  const filterValue = sliderElement.noUiSlider.get();
+  const getStyle = getFilterOption(currentFilter, 'getFilterStyle');
 
-  // Инициализировать слайдер
-  noUiSlider.create(sliderElement, sliderConfig);
+  imageElement.style.filter = getStyle(filterValue);
+  levelFieldElement.value = filterValue;
+});
 
-  // Обработчик события update слайдера
-  sliderElement.noUiSlider.on('update', () => {
-    const filterValue = sliderElement.noUiSlider.get();
-    const getStyle = getFilterOption(currentFilter, 'getFilterStyle');
+// Обработчик события change на радио баттоне
+effectListElement.addEventListener('change', (event) => {
+  const radioElement = event.target.closest('.effects__radio');
 
-    imageElement.style.filter = getStyle(filterValue);
-    levelFieldElement.value = filterValue;
-  });
+  if (radioElement) {
+    // Установить для фотографии соответствующий класс фильтра
+    // и обновить значение текущего фильтра
+    const newFilter = radioElement.value;
+    setImageClass(imageElement, newFilter, currentFilter);
+    currentFilter = newFilter;
 
-  // Обработчик события change на радио баттоне
-  effectListElement.addEventListener('change', (event) => {
-    const radioElement = event.target.closest('.effects__radio');
-
-    if (radioElement) {
-      // Установить для фотографии соответствующий класс фильтра
-      // и обновить значение текущего фильтра
-      const newFilter = radioElement.value;
-      setImageClass(imageElement, newFilter, currentFilter);
-      currentFilter = newFilter;
-
-      if (currentFilter === 'none') {
-        setOriginal();
-      } else {
-        setFilter(currentFilter);
-      }
+    if (currentFilter === DEFAULT_FILTER) {
+      resetFilter();
+    } else {
+      setFilter(currentFilter);
     }
-  });
+  }
+});
 
-  // По умолчанию выбран "Оригинал"
-  setOriginal();
-};
+// Обработчик сброса формы
+formElement.addEventListener('reset', resetFilter);
 
-export { createFilterEditor };
+// По умолчанию выбран "Оригинал"
+resetFilter();
