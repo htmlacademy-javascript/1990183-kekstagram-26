@@ -1,6 +1,6 @@
 import { isEscapeKey } from './util.js';
 import { toggleModalClasses } from './modal.js';
-import { validate } from './validation.js';
+import { resetValidator } from './validation.js';
 import { resetScale } from './scale-editor.js';
 import './filter-editor.js';
 
@@ -13,6 +13,7 @@ const buttonCloseElement = uploadModalElement.querySelector('#upload-cancel');
 // Сбросить все поля формы
 const resetForm = () => {
   uploadFormElement.reset();
+  resetValidator();
   resetScale();
 };
 
@@ -59,6 +60,3 @@ fieldsElements.forEach((field) => {
     event.stopPropagation();
   });
 });
-
-// Валидация формы
-validate(uploadFormElement);
