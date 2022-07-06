@@ -1,7 +1,7 @@
 import { isEscapeKey } from './util.js';
 import { toggleModalClasses } from './modal.js';
 import { validate } from './validation.js';
-import { createScaleEditor } from './scale-editor.js';
+import { resetScale } from './scale-editor.js';
 import './filter-editor.js';
 
 const uploadFileElement = document.querySelector('#upload-file');
@@ -10,10 +10,16 @@ const fieldsElements = uploadFormElement.querySelectorAll('[name="hashtags"], [n
 const uploadModalElement = document.querySelector('.img-upload__overlay');
 const buttonCloseElement = uploadModalElement.querySelector('#upload-cancel');
 
+// Сбросить все поля формы
+const resetForm = () => {
+  uploadFormElement.reset();
+  resetScale();
+};
+
 // Закрыть модальное окно с формой
 const closeUploadModal = () => {
   toggleModalClasses(uploadModalElement);
-  uploadFormElement.reset();
+  resetForm();
 };
 
 // Закрыть модальное окно по нажатию ESC
@@ -56,6 +62,3 @@ fieldsElements.forEach((field) => {
 
 // Валидация формы
 validate(uploadFormElement);
-
-// Изменение масштаба загружаемого изображения
-createScaleEditor(uploadFormElement);
