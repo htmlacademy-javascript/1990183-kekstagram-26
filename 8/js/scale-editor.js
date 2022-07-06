@@ -3,39 +3,42 @@ const DEFAULT_SCALE = 100;
 const MIN_SCALE = 25;
 const MAX_SCALE = 100;
 
+const formElement = document.querySelector('#upload-select-image');
+const controlSmallerElement = formElement.querySelector('.scale__control--smaller');
+const controlBiggerElement = formElement.querySelector('.scale__control--bigger');
+const scaleFieldElement = formElement.querySelector('.scale__control--value');
+const imageElement = formElement.querySelector('.img-upload__preview img');
+
 // Установить значение масштаба
-const setScale = (fieldElement, imageElement, value) => {
-  fieldElement.value = value;
+const setScale = (value) => {
+  scaleFieldElement.value = `${value}%`;
   imageElement.style.transform = `scale(${value / 100})`;
 };
 
-const createScaleEditor = (form) => {
-  const controlSmallerElement = form.querySelector('.scale__control--smaller');
-  const controlBiggerElement = form.querySelector('.scale__control--bigger');
-  const scaleFieldElement = form.querySelector('.scale__control--value');
-  const imageElement = form.querySelector('.img-upload__preview img');
-
-  // Установить масштаб по умолчанию
-  setScale(scaleFieldElement, imageElement, DEFAULT_SCALE);
-
-  // Текущее значение масштаба
-  let currentScale = Number(scaleFieldElement.value);
-
-  // Обработчик события клика по кнопке уменьшения масштаба
-  controlSmallerElement.addEventListener('click', () => {
-    if (currentScale > MIN_SCALE) {
-      currentScale -= STEP;
-      setScale(scaleFieldElement, imageElement, currentScale);
-    }
-  });
-
-  // Обработчик события клика по кнопке увеличения масштаба
-  controlBiggerElement.addEventListener('click', () => {
-    if (currentScale < MAX_SCALE) {
-      currentScale += STEP;
-      setScale(scaleFieldElement, imageElement, currentScale);
-    }
-  });
+// Установить масштаб по умолчанию
+const resetScale = () => {
+  setScale(DEFAULT_SCALE);
 };
 
-export { createScaleEditor };
+resetScale();
+
+// Текущее значение масштаба
+let currentScale = parseInt(scaleFieldElement.value, 10);
+
+// Обработчик события клика по кнопке уменьшения масштаба
+controlSmallerElement.addEventListener('click', () => {
+  if (currentScale > MIN_SCALE) {
+    currentScale -= STEP;
+    setScale(currentScale);
+  }
+});
+
+// Обработчик события клика по кнопке увеличения масштаба
+controlBiggerElement.addEventListener('click', () => {
+  if (currentScale < MAX_SCALE) {
+    currentScale += STEP;
+    setScale(currentScale);
+  }
+});
+
+export { resetScale };

@@ -47,8 +47,8 @@ let currentFilter = DEFAULT_FILTER;
 const sliderConfig = {
   start: 100,
   range: {
-    'min': 0,
-    'max': 100,
+    min: 0,
+    max: 100,
   },
   step: 1,
   connect: 'lower',
@@ -71,12 +71,12 @@ const setConfigOption = (config, optionName, optionValue) => {
 const getImageMofifierClass = (modifier) => `effects__preview--${modifier}`;
 
 // Установить для фотографии css-класс, соответстующий фильтру
-const setImageClass = (photoElement, newModifier, oldModifier) => {
+const setImageClass = (newModifier, oldModifier) => {
   const newClass = getImageMofifierClass(newModifier);
   const oldClass = getImageMofifierClass(oldModifier);
 
-  photoElement.classList.add(newClass);
-  photoElement.classList.remove(oldClass);
+  imageElement.classList.add(newClass);
+  imageElement.classList.remove(oldClass);
 };
 
 // Установить "Оригинал"
@@ -123,7 +123,7 @@ effectListElement.addEventListener('change', (event) => {
     // Установить для фотографии соответствующий класс фильтра
     // и обновить значение текущего фильтра
     const newFilter = radioElement.value;
-    setImageClass(imageElement, newFilter, currentFilter);
+    setImageClass(newFilter, currentFilter);
     currentFilter = newFilter;
 
     if (currentFilter === DEFAULT_FILTER) {
@@ -134,8 +134,7 @@ effectListElement.addEventListener('change', (event) => {
   }
 });
 
-// Обработчик сброса формы
-formElement.addEventListener('reset', resetFilter);
-
 // По умолчанию выбран "Оригинал"
 resetFilter();
+
+export { resetFilter };

@@ -1,19 +1,27 @@
 import { isEscapeKey } from './util.js';
 import { toggleModalClasses } from './modal.js';
-import { validate } from './validation.js';
-import { createScaleEditor } from './scale-editor.js';
-import './filter-editor.js';
+import { resetValidator } from './validation.js';
+import { resetScale } from './scale-editor.js';
+import { resetFilter } from './filter-editor.js';
 
-const uploadFileElement = document.querySelector('#upload-file');
-const uploadFormElement = document.querySelector('#upload-select-image');
-const fieldsElements = uploadFormElement.querySelectorAll('[name="hashtags"], [name="description"]');
+const formElement = document.querySelector('#upload-select-image');
+const uploadFileElement = formElement.querySelector('#upload-file');
+const fieldsElements = formElement.querySelectorAll('[name="hashtags"], [name="description"]');
 const uploadModalElement = document.querySelector('.img-upload__overlay');
 const buttonCloseElement = uploadModalElement.querySelector('#upload-cancel');
+
+// Сбросить все поля формы
+const resetForm = () => {
+  formElement.reset();
+  resetValidator();
+  resetScale();
+  resetFilter();
+};
 
 // Закрыть модальное окно с формой
 const closeUploadModal = () => {
   toggleModalClasses(uploadModalElement);
-  uploadFormElement.reset();
+  resetForm();
 };
 
 // Закрыть модальное окно по нажатию ESC
@@ -25,6 +33,7 @@ const modalEscKeydownHandler = (event) => {
 
 // Открыть модальное окно с формой
 const openUploadModal = () => {
+  resetForm();
   toggleModalClasses(uploadModalElement);
 
   document.addEventListener(
@@ -53,9 +62,3 @@ fieldsElements.forEach((field) => {
     event.stopPropagation();
   });
 });
-
-// Валидация формы
-validate(uploadFormElement);
-
-// Изменение масштаба загружаемого изображения
-createScaleEditor(uploadFormElement);
