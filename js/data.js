@@ -50,7 +50,7 @@ const createComment = (id) => ({
 
 // Генерирует объект - пост
 const createPost = (index) => {
-  const commentCount = getRandomNumber(1, 5);
+  const commentCount = getRandomNumber(1, 25);
 
   return {
     id: index + 1,
