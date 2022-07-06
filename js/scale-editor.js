@@ -11,7 +11,7 @@ const imageElement = formElement.querySelector('.img-upload__preview img');
 
 // Установить значение масштаба
 const setScale = (value) => {
-  scaleFieldElement.value = value;
+  scaleFieldElement.value = `${value}%`;
   imageElement.style.transform = `scale(${value / 100})`;
 };
 
@@ -23,7 +23,7 @@ const resetScale = () => {
 resetScale();
 
 // Текущее значение масштаба
-let currentScale = Number(scaleFieldElement.value);
+let currentScale = parseInt(scaleFieldElement.value, 10);
 
 // Обработчик события клика по кнопке уменьшения масштаба
 controlSmallerElement.addEventListener('click', () => {

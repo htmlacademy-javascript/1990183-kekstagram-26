@@ -62,11 +62,6 @@ const pristine = new Pristine(formElement, {
   errorTextClass: 'form-text-error' ,
 }, false);
 
-// Сбросить результаты валидации формы
-const resetValidator = () => {
-  pristine.reset();
-};
-
 // Проверка на валидность формата хэштега
 pristine.addValidator(
   hashtagsFieldElement,
@@ -105,5 +100,10 @@ formElement.addEventListener('submit', (event) => {
     formElement.submit();
   }
 });
+
+// Сбросить результаты валидации формы
+const resetValidator = () => {
+  pristine.reset();
+};
 
 export { resetValidator };
