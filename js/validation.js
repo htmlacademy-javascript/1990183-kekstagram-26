@@ -11,8 +11,20 @@ const ErrorMessage = {
   COMMENT_LENGTH: `Длина комментария не может составлять больше ${COMMENT_MAX_LENGTH} символов`,
 };
 
+const formElement = document.querySelector('#upload-select-image');
+const hashtagsFieldElement = formElement.querySelector('[name="hashtags"]');
+const commentFieldElement = formElement.querySelector('[name="description"]');
+
 // Получить массив хэштегов из строки
-const getHashtagsFromField = (string) => string.trim().split(' ');
+const getHashtagsFromField = (string) => {
+  string = string.trim();
+
+  if (string.length === 0) {
+    return [];
+  }
+
+  return string.split(' ');
+};
 
 const hashtagRegExp = /^#[A-Za-zА-Яа-яЁё0-9]{1,19}$/;
 // Проверяет, является ли один хэштег валидным
@@ -41,57 +53,57 @@ const isHashtagsUnique = (value) => {
   return (set.size === lowercaseHashtags.length);
 };
 
-// Провалидировать форму
-const validate = (form) => {
-  const pristine = new Pristine(form, {
-    classTo: 'img-upload__field-wrapper',
-    errorClass: 'has-danger',
-    errorTextParent: 'img-upload__field-wrapper',
-    errorTextTag: 'div',
-    errorTextClass: 'form-text-error' ,
-  }, false);
-  const hashtagsFieldElement = form.querySelector('[name="hashtags"]');
-  const commentFieldElement = form.querySelector('[name="description"]');
+// Инициализация Pristine
+const pristine = new Pristine(formElement, {
+  classTo: 'img-upload__field-wrapper',
+  errorClass: 'has-danger',
+  errorTextParent: 'img-upload__field-wrapper',
+  errorTextTag: 'div',
+  errorTextClass: 'form-text-error' ,
+}, false);
 
-  pristine.addValidator(
-    hashtagsFieldElement,
-    isValidHashtags,
-    ErrorMessage.HASHTAG_FORMAT
-  );
+// Проверка на валидность формата хэштега
+pristine.addValidator(
+  hashtagsFieldElement,
+  isValidHashtags,
+  ErrorMessage.HASHTAG_FORMAT
+);
 
-  pristine.addValidator(
-    hashtagsFieldElement,
-    isValidHashtagsCount,
-    ErrorMessage.HASHTAG_COUNT
-  );
+// Проверка на валидность кол-ва хэштегов
+pristine.addValidator(
+  hashtagsFieldElement,
+  isValidHashtagsCount,
+  ErrorMessage.HASHTAG_COUNT
+);
 
-  pristine.addValidator(
-    hashtagsFieldElement,
-    isHashtagsUnique,
-    ErrorMessage.HASHTAG_DUPLICATION
-  );
+// Проверка на дублирование хэштегов
+pristine.addValidator(
+  hashtagsFieldElement,
+  isHashtagsUnique,
+  ErrorMessage.HASHTAG_DUPLICATION
+);
 
-  pristine.addValidator(
-    commentFieldElement,
-    (value) => isMaxLengthValid(value, COMMENT_MAX_LENGTH),
-    ErrorMessage.COMMENT_LENGTH
-  );
+// Проверка на валидность максимальной длины комментария
+pristine.addValidator(
+  commentFieldElement,
+  (value) => isMaxLengthValid(value, COMMENT_MAX_LENGTH),
+  ErrorMessage.COMMENT_LENGTH
+);
 
-  // Обработчик события отправки формы
-  form.addEventListener('submit', (event) => {
-    event.preventDefault();
+// Обработчик события отправки формы
+formElement.addEventListener('submit', (event) => {
+  event.preventDefault();
 
-    const isValid = pristine.validate();
+  const isValid = pristine.validate();
 
-    if (isValid) {
-      form.submit();
-    }
-  });
+  if (isValid) {
+    formElement.submit();
+  }
+});
 
-  // Обработчик события сброса формы
-  form.addEventListener('reset', () => {
-    pristine.reset();
-  });
+// Сбросить результаты валидации формы
+const resetValidator = () => {
+  pristine.reset();
 };
 
-export { validate };
+export { resetValidator };
