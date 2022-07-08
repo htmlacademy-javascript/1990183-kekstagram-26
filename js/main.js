@@ -1,7 +1,7 @@
 import { getData } from './api.js';
 import { renderThumbnails } from './thumbnails.js';
 import { openPostModal } from './post-view.js';
-import './form.js';
+import './form/form.js';
 
 const initializePosts = async () => {
   const picturesContainerElement = document.querySelector('.pictures');

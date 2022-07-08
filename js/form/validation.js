@@ -1,4 +1,4 @@
-import { isMaxLengthValid } from './util.js';
+import { isMaxLengthValid } from '../util.js';
 
 const HASHTAG_MAX_COUNT = 5;
 const COMMENT_MAX_LENGTH = 140;
@@ -83,16 +83,6 @@ pristine.addValidator(
   ErrorMessage.COMMENT_LENGTH
 );
 
-const onFormSubmit = (event) => {
-  event.preventDefault();
+const isFormValid = () => pristine.validate();
 
-  const isValid = pristine.validate();
-
-  if (isValid) {
-    formElement.submit();
-  }
-};
-
-formElement.addEventListener('submit', onFormSubmit);
-
-export { resetValidator };
+export { resetValidator, isFormValid };
