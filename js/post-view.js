@@ -105,9 +105,15 @@ const openPostModal = (post) => {
   document.addEventListener('keydown', onModalEscKeydown, { once: true });
 };
 
-const onButtonLoaderClick = () => downloadComments(state.post.comments);
+const onButtonLoaderClick = (event) => {
+  event.preventDefault();
 
-const onButtonCloseClick = () => {
+  downloadComments(state.post.comments);
+};
+
+const onButtonCloseClick = (event) => {
+  event.preventDefault();
+
   closePostModal();
   document.removeEventListener('keydown', onModalEscKeydown);
 };

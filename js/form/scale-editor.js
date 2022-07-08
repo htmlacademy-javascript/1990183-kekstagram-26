@@ -24,14 +24,18 @@ const resetScale = () => {
   setScale(ScaleSetting.DEFAULT);
 };
 
-const onControlSmallerClick = () => {
+const onControlSmallerClick = (event) => {
+  event.preventDefault();
+
   if (state.currentScale > ScaleSetting.MIN) {
     state.currentScale -= ScaleSetting.STEP;
     setScale(state.currentScale);
   }
 };
 
-const onControlBiggerClick = () => {
+const onControlBiggerClick = (event) => {
+  event.preventDefault();
+
   if (state.currentScale < ScaleSetting.MAX) {
     state.currentScale += ScaleSetting.STEP;
     setScale(state.currentScale);

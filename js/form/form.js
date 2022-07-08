@@ -82,7 +82,8 @@ const onUploadFileChange = (event) => {
   openUploadModal();
 };
 
-const onCloseButtonClick = () => {
+const onCloseButtonClick = (event) => {
+  event.preventDefault();
   closeUploadModal();
   resetForm();
 };
