@@ -2,125 +2,118 @@ import { toggleModalClasses } from './modal.js';
 import { isEscapeKey } from './util.js';
 
 const COMMENTS_PER_GROUP = 5;
+const HIDDEN_CLASS = 'hidden';
 
-const postModalElement = document.querySelector('.big-picture');
-const buttonCloseElement = postModalElement.querySelector('#picture-cancel');
-const imageElement = postModalElement.querySelector('.big-picture__img img');
-const likesCountElement = postModalElement.querySelector('.likes-count');
-const descriptionElement = postModalElement.querySelector('.social__caption');
-
-const commentListElement = postModalElement.querySelector('.social__comments');
-const commentElement = commentListElement.querySelector('.social__comment');
-const commentCountElement = postModalElement.querySelector('.comments-count');
-const commentShownCountElement = postModalElement.querySelector('.comments-shown-count');
-const buttonLoaderElement = postModalElement.querySelector('.comments-loader');
-
-// Шаблон комментария
-const templateCommentElement = commentElement.cloneNode(true);
-
-// Кол-во показанных комментариев
-let commentsShownCount = 0;
-
-// Обновить в разметке кол-во показанных комментариев
-const renderShownCount = (count) => {
-  commentShownCountElement.textContent = count;
+const state = {
+  shownCommentsCount: 0,
+  post: {
+    id: -1,
+    url: null,
+    description: null,
+    likes: -1,
+    comments: [
+      {
+        id: -1,
+        avatar: null,
+        message: null,
+        name: null,
+      },
+    ],
+  },
 };
 
-// Сбросить блок комментариев до изначального состояния
+const modalElement = document.querySelector('.big-picture');
+const buttonCloseElement = modalElement.querySelector('#picture-cancel');
+const imageElement = modalElement.querySelector('.big-picture__img img');
+const likesCountElement = modalElement.querySelector('.likes-count');
+const descriptionElement = modalElement.querySelector('.social__caption');
+
+const commentListElement = modalElement.querySelector('.social__comments');
+const templateCommentElement = commentListElement.querySelector('.social__comment').cloneNode(true);
+const commentsCountElement = modalElement.querySelector('.comments-count');
+const shownCommentsCountElement = modalElement.querySelector('.comments-shown-count');
+const buttonLoaderElement = modalElement.querySelector('.comments-loader');
+
+const renderShownCommentsCount = (count) => {
+  shownCommentsCountElement.textContent = count;
+};
+
 const resetCommentList = () => {
-  commentsShownCount = 0;
-  buttonLoaderElement.classList.remove('hidden');
+  state.shownCommentsCount = 0;
+  buttonLoaderElement.classList.remove(HIDDEN_CLASS);
 };
 
-// Отрисовать комментарии из массива comments,
-// начиная с порядкового номера beginIndex и заканчивая endIndex
 const renderCommentList = (comments, beginIndex, endIndex) => {
   const currentComments = comments.slice(beginIndex, endIndex);
   const commentListFragment = document.createDocumentFragment();
 
   currentComments.forEach((comment) => {
-    const currentCommentElement = templateCommentElement.cloneNode(true);
-    const avatarElement = currentCommentElement.querySelector('.social__picture');
-    const textElement = currentCommentElement.querySelector('.social__text');
+    const commentElement = templateCommentElement.cloneNode(true);
+    const avatarElement = commentElement.querySelector('.social__picture');
+    const textElement = commentElement.querySelector('.social__text');
 
     avatarElement.src = comment.avatar;
     avatarElement.alt = comment.name;
     textElement.textContent = comment.message;
 
-    commentListFragment.append(currentCommentElement);
+    commentListFragment.append(commentElement);
   });
 
   commentListElement.append(commentListFragment);
 };
 
-// Загрузить и отрисовать группу новых комментариев
 const downloadComments = (comments) => {
-  const newCommentsShownCount = commentsShownCount + COMMENTS_PER_GROUP;
+  const newShownCommentsCount = state.shownCommentsCount + COMMENTS_PER_GROUP;
+  const areAllCommentsShown = (newShownCommentsCount >= comments.length);
 
-  renderCommentList(comments, commentsShownCount, newCommentsShownCount);
-  commentsShownCount = (newCommentsShownCount > comments.length) ? comments.length : newCommentsShownCount;
-  renderShownCount(commentsShownCount);
+  renderCommentList(comments, state.shownCommentsCount, newShownCommentsCount);
+  state.shownCommentsCount = (areAllCommentsShown) ? comments.length : newShownCommentsCount;
+  renderShownCommentsCount(state.shownCommentsCount);
 
-  // Если показаны все комментарии, скрыть кнопку загрузки
-  if (commentsShownCount >= comments.length) {
-    buttonLoaderElement.classList.add('hidden');
+  if (areAllCommentsShown) {
+    buttonLoaderElement.classList.add(HIDDEN_CLASS);
   }
 };
 
-// Обновить данные в модальном окне
 const updatePostData = ({url, description, likes, comments}) => {
   imageElement.src = url;
   descriptionElement.textContent = description;
   likesCountElement.textContent = likes;
-  commentCountElement.textContent = comments.length;
+  commentsCountElement.textContent = comments.length;
 
-  // Отрисовать первую группу комментариев
   commentListElement.innerHTML = '';
   downloadComments(comments);
 };
 
-// Обработчик события клика по кнопке "загрузить еще".
-// Функция записывается в переменную и навешивается обработчик,
-// когда модальное окно открывается.
-// При закрытии модального окна обработчик удаляется.
-let buttonLoaderClickHandler;
-
-// Закрыть модальное окно
 const closePostModal = () => {
-  toggleModalClasses(postModalElement);
+  toggleModalClasses(modalElement);
   resetCommentList();
-  buttonLoaderElement.removeEventListener('click', buttonLoaderClickHandler);
 };
 
-// Закрыть модальное окно по нажатию ESC
-const modalEscKeydownHandler = (event) => {
+const onModalEscKeydown = (event) => {
   if (isEscapeKey(event)) {
     closePostModal();
   }
 };
 
-// Открыть модальное окно
 const openPostModal = (post) => {
-  updatePostData(post);
-  toggleModalClasses(postModalElement);
+  state.post = post;
 
-  // Обработчик события нажатия Esc
-  document.addEventListener(
-    'keydown',
-    modalEscKeydownHandler,
-    { once: true }
-  );
+  updatePostData(state.post);
+  toggleModalClasses(modalElement);
 
-  // Обработчик события клика по кнопкп "Загрузить еще"
-  buttonLoaderClickHandler = () => downloadComments(post.comments);
-  buttonLoaderElement.addEventListener('click', buttonLoaderClickHandler);
+  document.addEventListener('keydown', onModalEscKeydown, { once: true });
 };
 
-// Обработчик события клика по крестику "закрыть"
-buttonCloseElement.addEventListener('click', () => {
-  closePostModal();
+const onButtonLoaderClick = () => downloadComments(state.post.comments);
 
-  document.removeEventListener('keydown', modalEscKeydownHandler);
-});
+const onButtonCloseClick = () => {
+  closePostModal();
+  document.removeEventListener('keydown', onModalEscKeydown);
+};
+
+buttonLoaderElement.addEventListener('click', onButtonLoaderClick);
+
+buttonCloseElement.addEventListener('click', onButtonCloseClick);
 
 export { openPostModal };
