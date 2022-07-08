@@ -1,81 +1,119 @@
-import { HIDDEN_CLASS, toggleModalClasses } from './modal.js';
+import { toggleModalClasses } from './modal.js';
 import { isEscapeKey } from './util.js';
 
-const postModalElement = document.querySelector('.big-picture');
-const buttonCloseElement = postModalElement.querySelector('#picture-cancel');
-const imageElement = postModalElement.querySelector('.big-picture__img img');
-const likesCountElement = postModalElement.querySelector('.likes-count');
-const descriptionElement = postModalElement.querySelector('.social__caption');
+const COMMENTS_PER_GROUP = 5;
+const HIDDEN_CLASS = 'hidden';
 
-const commentListElement = postModalElement.querySelector('.social__comments');
-const commentElement = commentListElement.querySelector('.social__comment');
-const commentCountBlockElement = postModalElement.querySelector('.social__comment-count');
-const commentCountElement = postModalElement.querySelector('.comments-count');
-const commentLoaderElement = postModalElement.querySelector('.comments-loader');
+const state = {
+  shownCommentsCount: 0,
+  post: {
+    id: -1,
+    url: null,
+    description: null,
+    likes: -1,
+    comments: [
+      {
+        id: -1,
+        avatar: null,
+        message: null,
+        name: null,
+      },
+    ],
+  },
+};
 
-// Временное скрытие элементов
-commentCountBlockElement.classList.toggle(HIDDEN_CLASS);
-commentLoaderElement.classList.toggle(HIDDEN_CLASS);
+const modalElement = document.querySelector('.big-picture');
+const buttonCloseElement = modalElement.querySelector('#picture-cancel');
+const imageElement = modalElement.querySelector('.big-picture__img img');
+const likesCountElement = modalElement.querySelector('.likes-count');
+const descriptionElement = modalElement.querySelector('.social__caption');
 
-// Отрисовать список комментариев
-const renderCommentList = (comments) => {
+const commentListElement = modalElement.querySelector('.social__comments');
+const templateCommentElement = commentListElement.querySelector('.social__comment').cloneNode(true);
+const commentsCountElement = modalElement.querySelector('.comments-count');
+const shownCommentsCountElement = modalElement.querySelector('.comments-shown-count');
+const buttonLoaderElement = modalElement.querySelector('.comments-loader');
+
+const renderShownCommentsCount = (count) => {
+  shownCommentsCountElement.textContent = count;
+};
+
+const resetCommentList = () => {
+  state.shownCommentsCount = 0;
+  buttonLoaderElement.classList.remove(HIDDEN_CLASS);
+};
+
+const renderCommentList = (comments, beginIndex, endIndex) => {
+  const currentComments = comments.slice(beginIndex, endIndex);
   const commentListFragment = document.createDocumentFragment();
 
-  comments.forEach((comment) => {
-    const currentCommentElement = commentElement.cloneNode(true);
-    const avatarElement = currentCommentElement.querySelector('.social__picture');
-    const textElement = currentCommentElement.querySelector('.social__text');
+  currentComments.forEach((comment) => {
+    const commentElement = templateCommentElement.cloneNode(true);
+    const avatarElement = commentElement.querySelector('.social__picture');
+    const textElement = commentElement.querySelector('.social__text');
 
     avatarElement.src = comment.avatar;
     avatarElement.alt = comment.name;
     textElement.textContent = comment.message;
 
-    commentListFragment.append(currentCommentElement);
+    commentListFragment.append(commentElement);
   });
 
-  commentListElement.innerHTML = '';
   commentListElement.append(commentListFragment);
 };
 
-// Обновить данные в модальном окне
-const updatePostData = (post) => {
-  imageElement.src = post.url;
-  descriptionElement.textContent = post.description;
-  likesCountElement.textContent = post.likes;
-  commentCountElement.textContent = post.comments.length;
+const downloadComments = (comments) => {
+  const newShownCommentsCount = state.shownCommentsCount + COMMENTS_PER_GROUP;
+  const areAllCommentsShown = (newShownCommentsCount >= comments.length);
 
-  renderCommentList(post.comments);
+  renderCommentList(comments, state.shownCommentsCount, newShownCommentsCount);
+  state.shownCommentsCount = (areAllCommentsShown) ? comments.length : newShownCommentsCount;
+  renderShownCommentsCount(state.shownCommentsCount);
+
+  if (areAllCommentsShown) {
+    buttonLoaderElement.classList.add(HIDDEN_CLASS);
+  }
 };
 
-// Закрыть модальное окно
+const updatePostData = ({url, description, likes, comments}) => {
+  imageElement.src = url;
+  descriptionElement.textContent = description;
+  likesCountElement.textContent = likes;
+  commentsCountElement.textContent = comments.length;
+
+  commentListElement.innerHTML = '';
+  downloadComments(comments);
+};
+
 const closePostModal = () => {
-  toggleModalClasses(postModalElement);
+  toggleModalClasses(modalElement);
+  resetCommentList();
 };
 
-// Закрыть модальное окно по нажатию ESC
-const modalEscKeydownHandler = (event) => {
+const onModalEscKeydown = (event) => {
   if (isEscapeKey(event)) {
     closePostModal();
   }
 };
 
-// Открыть модальное окно
 const openPostModal = (post) => {
-  updatePostData(post);
-  toggleModalClasses(postModalElement);
+  state.post = post;
 
-  document.addEventListener(
-    'keydown',
-    modalEscKeydownHandler,
-    { once: true }
-  );
+  updatePostData(state.post);
+  toggleModalClasses(modalElement);
+
+  document.addEventListener('keydown', onModalEscKeydown, { once: true });
 };
 
-// Обработчик события клика по кнопке "закрыть"
-buttonCloseElement.addEventListener('click', () => {
-  closePostModal();
+const onButtonLoaderClick = () => downloadComments(state.post.comments);
 
-  document.removeEventListener('keydown', modalEscKeydownHandler);
-});
+const onButtonCloseClick = () => {
+  closePostModal();
+  document.removeEventListener('keydown', onModalEscKeydown);
+};
+
+buttonLoaderElement.addEventListener('click', onButtonLoaderClick);
+
+buttonCloseElement.addEventListener('click', onButtonCloseClick);
 
 export { openPostModal };

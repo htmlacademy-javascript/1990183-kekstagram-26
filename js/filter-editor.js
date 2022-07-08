@@ -1,35 +1,52 @@
 const DEFAULT_FILTER = 'none';
+const HIDDEN_CLASS = 'hidden';
 
-// Настройки фильтров
-const Filter = {
+const FilterOption = {
   CHROME : {
     STEP: 0.1,
     MAX: 1,
-    getFilterStyle: (value) => `grayscale(${value})`,
+    getCssFilterValue: (value) => `grayscale(${value})`,
   },
   SEPIA: {
     STEP: 0.1,
     MAX: 1,
-    getFilterStyle: (value) => `sepia(${value})`,
+    getCssFilterValue: (value) => `sepia(${value})`,
   },
   MARVIN: {
     STEP: 1,
     MAX: 100,
-    getFilterStyle: (value) => `invert(${value}%)`,
+    getCssFilterValue: (value) => `invert(${value}%)`,
   },
   PHOBOS: {
     STEP: 0.1,
     MAX: 3,
-    getFilterStyle: (value) => `blur(${value}px)`,
+    getCssFilterValue: (value) => `blur(${value}px)`,
   },
   HEAT: {
     STEP: 0.1,
     MAX: 3,
-    getFilterStyle: (value) => `brightness(${value})`,
+    getCssFilterValue: (value) => `brightness(${value})`,
   },
   NONE : {
-    getFilterStyle: () => 'none',
+    getCssFilterValue: () => 'none',
   },
+};
+
+const state = {
+  currentFilter: DEFAULT_FILTER,
+  sliderConfig: {
+    start: 100,
+    range: {
+      min: 0,
+      max: 100,
+    },
+    step: 1,
+    connect: 'lower',
+    format: {
+      to: (value) => value,
+      from: (value) => parseFloat(value),
+    },
+  }
 };
 
 const formElement = document.querySelector('#upload-select-image');
@@ -39,102 +56,90 @@ const sliderFieldsetElement = formElement.querySelector('.img-upload__effect-lev
 const levelFieldElement = sliderFieldsetElement.querySelector('.effect-level__value');
 const sliderElement = sliderFieldsetElement.querySelector('.effect-level__slider');
 
-// Текущее название фильтра,
-// по умолчанию выбран "Оригинал"
-let currentFilter = DEFAULT_FILTER;
-
-// Конфигурация слайдера
-const sliderConfig = {
-  start: 100,
-  range: {
-    min: 0,
-    max: 100,
-  },
-  step: 1,
-  connect: 'lower',
-  format: {
-    to: (value) => value,
-    from: (value) => parseFloat(value),
-  },
+const getFilterMax = (filterName) => {
+  const filter = filterName.toUpperCase();
+  return FilterOption[filter].MAX;
 };
 
-// Получить указанный параметр фильтра
-const getFilterOption = (filterName, optionName) => Filter[filterName.toUpperCase()][optionName];
-
-// Установить новые значения конфигурации слайдера
-const setConfigOption = (config, optionName, optionValue) => {
-  config[optionName] = optionValue;
-  return config;
+const getFilterStep = (filterName) => {
+  const filter = filterName.toUpperCase();
+  return FilterOption[filter].STEP;
 };
 
-// Возвращает класс-модификатор для фотографии
-const getImageMofifierClass = (modifier) => `effects__preview--${modifier}`;
+const getFilterStyle = (filterName, value) => {
+  const filter = filterName.toUpperCase();
+  return FilterOption[filter].getCssFilterValue(value);
+};
 
-// Установить для фотографии css-класс, соответстующий фильтру
+const setSliderConfigMax = (value) => {
+  state.sliderConfig.start = value;
+  state.sliderConfig.range.max = value;
+};
+
+const setSliderConfigStep = (value) => {
+  state.sliderConfig.step = value;
+};
+
+const getImageModifierClass = (modifier) => `effects__preview--${modifier}`;
+
 const setImageClass = (newModifier, oldModifier) => {
-  const newClass = getImageMofifierClass(newModifier);
-  const oldClass = getImageMofifierClass(oldModifier);
+  const newClass = getImageModifierClass(newModifier);
+  const oldClass = getImageModifierClass(oldModifier);
 
   imageElement.classList.add(newClass);
   imageElement.classList.remove(oldClass);
 };
 
-// Установить "Оригинал"
 const resetFilter = () => {
-  sliderElement.setAttribute('disabled', true);
-  sliderFieldsetElement.classList.add('hidden');
+  state.currentFilter = DEFAULT_FILTER;
+  imageElement.style.filter = getFilterStyle(state.currentFilter);
   levelFieldElement.value = '';
-  imageElement.style.filter = 'none';
-  currentFilter = DEFAULT_FILTER;
+  sliderElement.setAttribute('disabled', true);
+  sliderFieldsetElement.classList.add(HIDDEN_CLASS);
 };
 
-// Установить фильтр
 const setFilter = (filterName) => {
-  const max = getFilterOption(filterName, 'MAX');
-  const step = getFilterOption(filterName, 'STEP');
+  const max = getFilterMax(filterName);
+  const step = getFilterStep(filterName);
 
-  setConfigOption(sliderConfig, 'start', max);
-  setConfigOption(sliderConfig, 'range', { 'min': 0, 'max': max });
-  setConfigOption(sliderConfig, 'step', step);
+  setSliderConfigMax(max);
+  setSliderConfigStep(step);
 
   sliderElement.removeAttribute('disabled');
-  sliderElement.noUiSlider.updateOptions(sliderConfig);
+  sliderElement.noUiSlider.updateOptions(state.sliderConfig);
 
-  sliderFieldsetElement.classList.remove('hidden');
+  sliderFieldsetElement.classList.remove(HIDDEN_CLASS);
 };
 
-// Инициализировать слайдер
-noUiSlider.create(sliderElement, sliderConfig);
-
-// Обработчик события update слайдера
-sliderElement.noUiSlider.on('update', () => {
+const onSliderUpdate = () => {
   const filterValue = sliderElement.noUiSlider.get();
-  const getStyle = getFilterOption(currentFilter, 'getFilterStyle');
 
-  imageElement.style.filter = getStyle(filterValue);
+  imageElement.style.filter = getFilterStyle(state.currentFilter, filterValue);
   levelFieldElement.value = filterValue;
-});
+};
 
-// Обработчик события change на радио баттоне
-effectListElement.addEventListener('change', (event) => {
+const onEffectListChange = (event) => {
   const radioElement = event.target.closest('.effects__radio');
 
   if (radioElement) {
-    // Установить для фотографии соответствующий класс фильтра
-    // и обновить значение текущего фильтра
     const newFilter = radioElement.value;
-    setImageClass(newFilter, currentFilter);
-    currentFilter = newFilter;
+    setImageClass(newFilter, state.currentFilter);
+    state.currentFilter = newFilter;
 
-    if (currentFilter === DEFAULT_FILTER) {
+    if (state.currentFilter === DEFAULT_FILTER) {
       resetFilter();
     } else {
-      setFilter(currentFilter);
+      setFilter(state.currentFilter);
     }
   }
-});
+};
 
-// По умолчанию выбран "Оригинал"
+noUiSlider.create(sliderElement, state.sliderConfig);
+
+sliderElement.noUiSlider.on('update', onSliderUpdate);
+
+effectListElement.addEventListener('change', onEffectListChange);
+
 resetFilter();
 
 export { resetFilter };
