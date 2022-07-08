@@ -239,6 +239,19 @@
     <div class="img-upload__message  img-upload__message--loading">Загружаем...</div>
   </template>
 
+  <!-- Сообщение об ошибке -->
+  <template id="notice">    
+    <div class="notice">
+      <svg class="notice__icon"
+          viewBox="0 0 20 20">
+        <path d="M10,0 C4.5,0 0,4.5 0,10 C0,15.5 4.5,20 10,20 C15.5,20 20,15.5 20,10 C20,4.5 15.5,0 10,0 L10,0 Z M11,15 L9,15 L9,13 L11,13 L11,15 L11,15 Z M11,11 L9,11 L9,5 L11,5 L11,11 L11,11 Z"/>
+      </svg>
+      <p class="notice__text">Текст сообщения об ошибке</p>
+      <button type="button"
+              class="button-close notice__close">Закрыть</button>
+    </div>
+  </template>
+
   <script src="nouislider/nouislider.js"></script>
   <script src="pristine/pristine.min.js"></script>
   <script src="js/main.js" type="module"></script>
