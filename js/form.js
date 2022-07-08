@@ -5,58 +5,76 @@ import { resetScale } from './scale-editor.js';
 import { resetFilter } from './filter-editor.js';
 
 const formElement = document.querySelector('#upload-select-image');
+const imageElement = formElement.querySelector('.img-upload__preview img');
 const uploadFileElement = formElement.querySelector('#upload-file');
 const fieldsElements = formElement.querySelectorAll('[name="hashtags"], [name="description"]');
 const uploadModalElement = document.querySelector('.img-upload__overlay');
 const buttonCloseElement = uploadModalElement.querySelector('#upload-cancel');
 
-// Сбросить все поля формы
+const resetFields = () => {
+  uploadFileElement.value = '';
+  fieldsElements.forEach((field) => {
+    field.value = '';
+  });
+};
+
 const resetForm = () => {
-  formElement.reset();
+  resetFields();
   resetValidator();
   resetScale();
   resetFilter();
 };
 
-// Закрыть модальное окно с формой
 const closeUploadModal = () => {
   toggleModalClasses(uploadModalElement);
   resetForm();
 };
 
-// Закрыть модальное окно по нажатию ESC
-const modalEscKeydownHandler = (event) => {
+const onModalEscKeydown = (event) => {
   if (isEscapeKey(event)) {
     closeUploadModal();
   }
 };
 
-// Открыть модальное окно с формой
 const openUploadModal = () => {
-  resetForm();
   toggleModalClasses(uploadModalElement);
 
   document.addEventListener(
     'keydown',
-    modalEscKeydownHandler,
+    onModalEscKeydown,
     { once: true }
   );
 };
 
-// Обработчик события загрузки фото
-uploadFileElement.addEventListener('change', () => {
-  openUploadModal();
-});
+const uploadImageFile = (inputFile) => {
+  const file = inputFile.files[0];
+  const reader = new FileReader();
 
-// Обработчик события клика по крестику (кнопка закрыть)
-buttonCloseElement.addEventListener('click', () => {
+  reader.readAsDataURL(file);
+  reader.onload = () => {
+    imageElement.src = reader.result;
+  };
+  reader.onerror = () => {
+    throw new Error('Ошибка загрузки файла');
+  };
+
+};
+
+const onUploadFileChange = (event) => {
+  uploadImageFile(event.target);
+  openUploadModal();
+};
+
+const onButtonCloseClick = () => {
   closeUploadModal();
 
-  document.removeEventListener('keydown', modalEscKeydownHandler);
-});
+  document.removeEventListener('keydown', onModalEscKeydown);
+};
 
-// Запретить закрытие модального окна при нажатии Esc,
-// если одно из полей ввода находится в фокусе
+uploadFileElement.addEventListener('change', onUploadFileChange);
+
+buttonCloseElement.addEventListener('click', onButtonCloseClick);
+
 fieldsElements.forEach((field) => {
   field.addEventListener('keydown', (event) => {
     event.stopPropagation();
