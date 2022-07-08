@@ -25,21 +25,21 @@ const getHashtagsFromField = (string) => {
 };
 
 const hashtagRegExp = /^#[A-Za-zА-Яа-яЁё0-9]{1,19}$/;
-const isValidHashtag = (value) => hashtagRegExp.test(value);
+const isHashtagValid = (value) => hashtagRegExp.test(value);
 
-const isValidHashtags = (value) => {
+const areHashtagsValid = (value) => {
   const hashtags = getHashtagsFromField(value);
 
-  return hashtags.every((hashtag) => isValidHashtag(hashtag));
+  return hashtags.every((hashtag) => isHashtagValid(hashtag));
 };
 
-const isValidHashtagsCount = (value) => {
+const isHashtagsCountValid = (value) => {
   const hashtags = getHashtagsFromField(value);
 
   return (hashtags.length <= HASHTAG_MAX_COUNT);
 };
 
-const isHashtagsUnique = (value) => {
+const areHashtagsUnique = (value) => {
   const hashtags = getHashtagsFromField(value);
   const lowercaseHashtags = hashtags.map((hashtag) => hashtag.toLowerCase());
   const set = new Set(lowercaseHashtags);
@@ -55,21 +55,25 @@ const pristine = new Pristine(formElement, {
   errorTextClass: 'form-text-error' ,
 }, false);
 
+const resetValidator = () => {
+  pristine.reset();
+};
+
 pristine.addValidator(
   hashtagsFieldElement,
-  isValidHashtags,
+  areHashtagsValid,
   ErrorMessage.HASHTAG_FORMAT
 );
 
 pristine.addValidator(
   hashtagsFieldElement,
-  isValidHashtagsCount,
+  isHashtagsCountValid,
   ErrorMessage.HASHTAG_COUNT
 );
 
 pristine.addValidator(
   hashtagsFieldElement,
-  isHashtagsUnique,
+  areHashtagsUnique,
   ErrorMessage.HASHTAG_DUPLICATION
 );
 
@@ -79,7 +83,7 @@ pristine.addValidator(
   ErrorMessage.COMMENT_LENGTH
 );
 
-formElement.addEventListener('submit', (event) => {
+const onFormSubmit = (event) => {
   event.preventDefault();
 
   const isValid = pristine.validate();
@@ -87,10 +91,8 @@ formElement.addEventListener('submit', (event) => {
   if (isValid) {
     formElement.submit();
   }
-});
-
-const resetValidator = () => {
-  pristine.reset();
 };
+
+formElement.addEventListener('submit', onFormSubmit);
 
 export { resetValidator };
