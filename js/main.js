@@ -3,13 +3,11 @@ import { renderThumbnails } from './thumbnails.js';
 import { openPostModal } from './post-view.js';
 import './form.js';
 
-// Отрисовать посты и инициализировать модальные окна
-const initializePosts = (posts) => {
-  // Отрисовка всех постов
-  renderThumbnails(posts);
+const initializePosts = async () => {
+  const picturesContainerElement = document.querySelector('.pictures');
+  const posts = await getData();
 
-  // Обработчик события клика по миниатюрам постов
-  document.addEventListener('click', (event) => {
+  const onPicturesContainerClick = (event) => {
     const postElement = event.target.closest('.picture');
 
     if (postElement) {
@@ -20,7 +18,11 @@ const initializePosts = (posts) => {
 
       openPostModal(currentPost);
     }
-  });
+  };
+
+  renderThumbnails(posts);
+
+  picturesContainerElement.addEventListener('click', onPicturesContainerClick);
 };
 
-getData(initializePosts);
+initializePosts();

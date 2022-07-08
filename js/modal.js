@@ -7,7 +7,4 @@ const toggleModalClasses = (modalElement) => {
   document.body.classList.toggle(BODY_CLASS);
 };
 
-export {
-  HIDDEN_CLASS,
-  toggleModalClasses,
-};
+export { toggleModalClasses };
