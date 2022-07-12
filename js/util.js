@@ -1,4 +1,3 @@
-// Возвращает рандомное целое число из положительного диапазона
 const getRandomNumber = (from, to) => {
   if (from > to) {
     throw new Error('В диапазоне значение «до» должно быть меньше, чем значение «от»');
@@ -14,32 +13,27 @@ const getRandomNumber = (from, to) => {
   return randomInteger;
 };
 
-// Возвращает уникальное рандомное число из диапазона.
-// exсeptions - массив с повторными значениями
-const getUniqueRandomNumber = (from, to, exсeptions) => {
+const getUniqueRandomNumber = (from, to, exceptions) => {
   const randomInteger = getRandomNumber(from, to);
 
-  if (exсeptions.includes(randomInteger)) {
-    return getUniqueRandomNumber(from, to, exсeptions);
+  if (exceptions.includes(randomInteger)) {
+    return getUniqueRandomNumber(from, to, exceptions);
   }
 
-  exсeptions.push(randomInteger);
+  exceptions.push(randomInteger);
 
   return randomInteger;
 };
 
-// Возвращает рандомный элемент из массива
 const getRandomArrayElement = (array) => {
   const index = getRandomNumber(0, array.length - 1);
 
   return array[index];
 };
 
-// Проверяет строку на соответствие максимальной длине
 const isMaxLengthValid = (string, maxLength) => (string.length <= maxLength);
 
-// Проверяет нажата ли клавиша Escape
-const isEscapeKey = (event) => (event.key === 'Escape');
+const isEscapeKey = (evt) => (evt.key === 'Escape');
 
 export {
   getRandomNumber,

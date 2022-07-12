@@ -52,6 +52,7 @@ const state = {
 const formElement = document.querySelector('#upload-select-image');
 const imageElement = formElement.querySelector('.img-upload__preview img');
 const effectListElement = formElement.querySelector('.effects__list');
+const defaultRadioElement = effectListElement.querySelector(`.effects__radio[value="${DEFAULT_FILTER}"]`);
 const sliderFieldsetElement = formElement.querySelector('.img-upload__effect-level');
 const levelFieldElement = sliderFieldsetElement.querySelector('.effect-level__value');
 const sliderElement = sliderFieldsetElement.querySelector('.effect-level__slider');
@@ -94,6 +95,7 @@ const resetFilter = () => {
   state.currentFilter = DEFAULT_FILTER;
   imageElement.style.filter = getFilterStyle(state.currentFilter);
   levelFieldElement.value = '';
+  defaultRadioElement.checked = true;
   sliderElement.setAttribute('disabled', true);
   sliderFieldsetElement.classList.add(HIDDEN_CLASS);
 };
@@ -118,8 +120,8 @@ const onSliderUpdate = () => {
   levelFieldElement.value = filterValue;
 };
 
-const onEffectListChange = (event) => {
-  const radioElement = event.target.closest('.effects__radio');
+const onEffectListChange = (evt) => {
+  const radioElement = evt.target.closest('.effects__radio');
 
   if (radioElement) {
     const newFilter = radioElement.value;

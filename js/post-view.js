@@ -90,8 +90,8 @@ const closePostModal = () => {
   resetCommentList();
 };
 
-const onModalEscKeydown = (event) => {
-  if (isEscapeKey(event)) {
+const onModalEscKeydown = (evt) => {
+  if (isEscapeKey(evt)) {
     closePostModal();
   }
 };
@@ -105,9 +105,15 @@ const openPostModal = (post) => {
   document.addEventListener('keydown', onModalEscKeydown, { once: true });
 };
 
-const onButtonLoaderClick = () => downloadComments(state.post.comments);
+const onButtonLoaderClick = (evt) => {
+  evt.preventDefault();
 
-const onButtonCloseClick = () => {
+  downloadComments(state.post.comments);
+};
+
+const onButtonCloseClick = (evt) => {
+  evt.preventDefault();
+
   closePostModal();
   document.removeEventListener('keydown', onModalEscKeydown);
 };
