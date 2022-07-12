@@ -120,8 +120,8 @@ const onSliderUpdate = () => {
   levelFieldElement.value = filterValue;
 };
 
-const onEffectListChange = (event) => {
-  const radioElement = event.target.closest('.effects__radio');
+const onEffectListChange = (evt) => {
+  const radioElement = evt.target.closest('.effects__radio');
 
   if (radioElement) {
     const newFilter = radioElement.value;

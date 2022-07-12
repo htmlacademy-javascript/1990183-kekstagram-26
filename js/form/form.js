@@ -5,6 +5,7 @@ import { resetScale } from './scale-editor.js';
 import { resetFilter } from './filter-editor.js';
 import { setData } from '../api.js';
 import { showSuccessNotice, showErrorNotice } from './notice.js';
+import { showNotice } from '../notice.js';
 
 const formElement = document.querySelector('#upload-select-image');
 const imageElement = formElement.querySelector('.img-upload__preview img');
@@ -41,8 +42,8 @@ const closeUploadModal = () => {
 // В данном случае используется декларативное объявление функции,
 // чтобы благодаря всплытию этот обработчик можно было удалить
 // выше по коду в closeUploadModal()
-function onModalEscKeydown (event) {
-  if (isEscapeKey(event)) {
+function onModalEscKeydown (evt) {
+  if (isEscapeKey(evt)) {
     closeUploadModal();
     resetForm();
   }
@@ -65,6 +66,12 @@ const enableSubmit = () => {
 
 const uploadImageFile = (inputFile) => {
   const file = inputFile.files[0];
+  const isTypeInvalid = !file.type.startsWith('image/');
+
+  if (isTypeInvalid) {
+    throw new Error('Загрузить можно только изображение.');
+  }
+
   const reader = new FileReader();
 
   reader.readAsDataURL(file);
@@ -74,16 +81,19 @@ const uploadImageFile = (inputFile) => {
   reader.onerror = () => {
     throw new Error('Ошибка загрузки файла');
   };
-
 };
 
-const onUploadFileChange = (event) => {
-  uploadImageFile(event.target);
-  openUploadModal();
+const onUploadFileChange = (evt) => {
+  try {
+    uploadImageFile(evt.target);
+    openUploadModal();
+  } catch (error) {
+    showNotice(error.message);
+  }
 };
 
-const onCloseButtonClick = (event) => {
-  event.preventDefault();
+const onCloseButtonClick = (evt) => {
+  evt.preventDefault();
   closeUploadModal();
   resetForm();
 };
@@ -101,12 +111,12 @@ const onFailResponse = () => {
   showErrorNotice();
 };
 
-const onFormSubmit = (event) => {
-  event.preventDefault();
+const onFormSubmit = (evt) => {
+  evt.preventDefault();
 
   if (isFormValid()) {
     disableSubmit();
-    setData(event.target, onSuccessResponse, onFailResponse);
+    setData(evt.target, onSuccessResponse, onFailResponse);
   }
 };
 
@@ -115,7 +125,7 @@ closeButtonElement.addEventListener('click', onCloseButtonClick);
 formElement.addEventListener('submit', onFormSubmit);
 
 textFieldElements.forEach((field) => {
-  field.addEventListener('keydown', (event) => {
-    event.stopPropagation();
+  field.addEventListener('keydown', (evt) => {
+    evt.stopPropagation();
   });
 });

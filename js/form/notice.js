@@ -29,8 +29,8 @@ const createNotice = (config) => {
     document.removeEventListener('keydown', onNoticeEscKeydown);
   };
 
-  const onNoticeClick = (event) => {
-    const noticeContainer = event.target.closest(config.CONTAINER);
+  const onNoticeClick = (evt) => {
+    const noticeContainer = evt.target.closest(config.CONTAINER);
 
     if (!noticeContainer) {
       onCloseButtonClick();
@@ -40,8 +40,8 @@ const createNotice = (config) => {
   // В данном случае используется декларативное объявление функции,
   // чтобы благодаря всплытию этот обработчик можно было удалить
   // выше по коду в onCloseButtonClick()
-  function onNoticeEscKeydown (event) {
-    if (isEscapeKey(event)) {
+  function onNoticeEscKeydown (evt) {
+    if (isEscapeKey(evt)) {
       onCloseButtonClick();
     }
   }
