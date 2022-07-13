@@ -106,7 +106,6 @@ const onSuccessResponse = () => {
 };
 
 const onFailResponse = () => {
-  closeUploadModal();
   enableSubmit();
   showErrorNotice();
 };
