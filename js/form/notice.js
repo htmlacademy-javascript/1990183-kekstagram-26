@@ -1,13 +1,13 @@
 import { isEscapeKey } from '../util.js';
 
-const SuccessSelector = {
+const SuccessModal = {
   TEMPLATE: '#success',
   ELEMENT: '.success',
   BUTTON: '.success__button',
   CONTAINER: '.success__inner',
 };
 
-const ErrorSelector = {
+const ErrorModal = {
   TEMPLATE: '#error',
   ELEMENT: '.error',
   BUTTON: '.error__button',
@@ -24,7 +24,7 @@ const createNotice = (config) => {
     document.addEventListener('keydown', onNoticeEscKeydown);
   };
 
-  const onCloseButtonClick = () => {
+  const closeNotice = () => {
     noticeElement.remove();
     document.removeEventListener('keydown', onNoticeEscKeydown);
   };
@@ -33,18 +33,20 @@ const createNotice = (config) => {
     const noticeContainer = evt.target.closest(config.CONTAINER);
 
     if (!noticeContainer) {
-      onCloseButtonClick();
+      closeNotice();
     }
   };
 
   // В данном случае используется декларативное объявление функции,
   // чтобы благодаря всплытию этот обработчик можно было удалить
-  // выше по коду в onCloseButtonClick()
+  // выше по коду в closeNotice()
   function onNoticeEscKeydown (evt) {
     if (isEscapeKey(evt)) {
-      onCloseButtonClick();
+      closeNotice();
     }
   }
+
+  const onCloseButtonClick = closeNotice();
 
   closeButtonElement.addEventListener('click', onCloseButtonClick);
   noticeElement.addEventListener('click', onNoticeClick);
@@ -52,7 +54,7 @@ const createNotice = (config) => {
   return showNotice;
 };
 
-const showSuccessNotice = createNotice(SuccessSelector);
-const showErrorNotice = createNotice(ErrorSelector);
+const showSuccessNotice = createNotice(SuccessModal);
+const showErrorNotice = createNotice(ErrorModal);
 
 export { showSuccessNotice, showErrorNotice };

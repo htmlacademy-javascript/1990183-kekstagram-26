@@ -5,30 +5,42 @@ const FilterOption = {
   CHROME : {
     STEP: 0.1,
     MAX: 1,
-    getCssFilterValue: (value) => `grayscale(${value})`,
+    getCssValue(value) {
+      return `grayscale(${value})`;
+    },
   },
   SEPIA: {
     STEP: 0.1,
     MAX: 1,
-    getCssFilterValue: (value) => `sepia(${value})`,
+    getCssValue(value) {
+      return `sepia(${value})`;
+    },
   },
   MARVIN: {
     STEP: 1,
     MAX: 100,
-    getCssFilterValue: (value) => `invert(${value}%)`,
+    getCssValue(value) {
+      return `invert(${value}%)`;
+    },
   },
   PHOBOS: {
     STEP: 0.1,
     MAX: 3,
-    getCssFilterValue: (value) => `blur(${value}px)`,
+    getCssValue(value) {
+      return `blur(${value}px)`;
+    },
   },
   HEAT: {
     STEP: 0.1,
     MAX: 3,
-    getCssFilterValue: (value) => `brightness(${value})`,
+    getCssValue(value) {
+      return `brightness(${value})`;
+    },
   },
   NONE : {
-    getCssFilterValue: () => 'none',
+    getCssValue() {
+      return 'none';
+    },
   },
 };
 
@@ -69,7 +81,7 @@ const getFilterStep = (filterName) => {
 
 const getFilterStyle = (filterName, value) => {
   const filter = filterName.toUpperCase();
-  return FilterOption[filter].getCssFilterValue(value);
+  return FilterOption[filter].getCssValue(value);
 };
 
 const setSliderConfigMax = (value) => {
