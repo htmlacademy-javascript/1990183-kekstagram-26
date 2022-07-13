@@ -88,13 +88,17 @@ const updatePostData = ({url, description, likes, comments}) => {
 const closePostModal = () => {
   toggleModalClasses(modalElement);
   resetCommentList();
+  document.removeEventListener('keydown', onModalEscKeydown);
 };
 
-const onModalEscKeydown = (evt) => {
+// В данном случае используется декларативное объявление функции,
+// чтобы благодаря всплытию этот обработчик можно было удалить
+// выше по коду в closePostModal()
+function onModalEscKeydown (evt) {
   if (isEscapeKey(evt)) {
     closePostModal();
   }
-};
+}
 
 const openPostModal = (post) => {
   state.post = post;
@@ -102,7 +106,7 @@ const openPostModal = (post) => {
   updatePostData(state.post);
   toggleModalClasses(modalElement);
 
-  document.addEventListener('keydown', onModalEscKeydown, { once: true });
+  document.addEventListener('keydown', onModalEscKeydown);
 };
 
 const onButtonLoaderClick = (evt) => {
@@ -115,7 +119,6 @@ const onButtonCloseClick = (evt) => {
   evt.preventDefault();
 
   closePostModal();
-  document.removeEventListener('keydown', onModalEscKeydown);
 };
 
 buttonLoaderElement.addEventListener('click', onButtonLoaderClick);
