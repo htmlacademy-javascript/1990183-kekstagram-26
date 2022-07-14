@@ -43,7 +43,10 @@ const closeUploadModal = () => {
 // чтобы благодаря всплытию этот обработчик можно было удалить
 // выше по коду в closeUploadModal()
 function onModalEscKeydown (evt) {
-  if (isEscapeKey(evt)) {
+  const noticeErrorElement = document.querySelector('.error');
+  const isNoticeHidden = !noticeErrorElement;
+
+  if (isEscapeKey(evt) && isNoticeHidden) {
     closeUploadModal();
     resetForm();
   }
@@ -106,7 +109,6 @@ const onSuccessResponse = () => {
 };
 
 const onFailResponse = () => {
-  closeUploadModal();
   enableSubmit();
   showErrorNotice();
 };

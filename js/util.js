@@ -13,32 +13,55 @@ const getRandomNumber = (from, to) => {
   return randomInteger;
 };
 
-const getUniqueRandomNumber = (from, to, exceptions) => {
-  const randomInteger = getRandomNumber(from, to);
-
-  if (exceptions.includes(randomInteger)) {
-    return getUniqueRandomNumber(from, to, exceptions);
-  }
-
-  exceptions.push(randomInteger);
-
-  return randomInteger;
-};
-
 const getRandomArrayElement = (array) => {
   const index = getRandomNumber(0, array.length - 1);
 
   return array[index];
 };
 
+const getUniqueRandomArrayElements = (array, count) => {
+  if (array.length < count) {
+    throw new Error('Количество элементов не должно превышать длину массива');
+  }
+
+  const uniqueRandomElements = [];
+
+  for (let i = 0; i < count; i++) {
+    let randomElement = getRandomArrayElement(array);
+
+    while (uniqueRandomElements.includes(randomElement)) {
+      randomElement = getRandomArrayElement(array);
+    }
+
+    uniqueRandomElements.push(randomElement);
+  }
+
+  return uniqueRandomElements;
+};
+
 const isMaxLengthValid = (string, maxLength) => (string.length <= maxLength);
 
 const isEscapeKey = (evt) => (evt.key === 'Escape');
 
+const debounce = (cb, delay) => {
+  let timerId;
+
+  return (...args) => {
+    clearTimeout(timerId);
+    timerId = setTimeout(
+      () => cb(...args),
+      delay
+    );
+  };
+};
+
 export {
+  // getRandomNumber нигде не используется кроме этого модуля
   getRandomNumber,
-  getUniqueRandomNumber,
+  // getRandomArrayElement  аналогично
   getRandomArrayElement,
+  getUniqueRandomArrayElements,
   isEscapeKey,
-  isMaxLengthValid
+  isMaxLengthValid,
+  debounce
 };

@@ -2,7 +2,15 @@ const thumbnailTemplateElement = document.querySelector('#picture').content.quer
 const thumbnailsContainerElement = document.querySelector('.pictures');
 const fragment = document.createDocumentFragment();
 
+const removeThumbnails = () => {
+  const thumbnails = thumbnailsContainerElement.querySelectorAll('.picture');
+
+  thumbnails.forEach((thumbnail) => thumbnail.remove());
+};
+
 const renderThumbnails = (posts) => {
+  removeThumbnails();
+
   posts.forEach((post) => {
     const thumbnailElement = thumbnailTemplateElement.cloneNode(true);
     const imageElement = thumbnailElement.querySelector('.picture__img');
