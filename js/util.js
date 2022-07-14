@@ -56,7 +56,9 @@ const debounce = (cb, delay) => {
 };
 
 export {
+  // getRandomNumber нигде не используется кроме этого модуля
   getRandomNumber,
+  // getRandomArrayElement  аналогично
   getRandomArrayElement,
   getUniqueRandomArrayElements,
   isEscapeKey,

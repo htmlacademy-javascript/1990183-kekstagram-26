@@ -54,6 +54,9 @@ const initializeFilter = (posts, cb) => {
       const getCurrentPosts = buttonToGetPosts[buttonId];
       const currentPosts = getCurrentPosts(posts);
 
+      // не критично, но лучше какое-то более понятно название чем cb
+      // с учетом того что он здесь debounce
+      // а почему бы сюда debounce не перенести? либо я че то не понял
       cb(currentPosts);
       setActiveButtonClass(buttonElement);
     }
