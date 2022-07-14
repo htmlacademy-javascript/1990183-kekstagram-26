@@ -46,7 +46,7 @@ const createNotice = (config) => {
     }
   }
 
-  const onCloseButtonClick = closeNotice();
+  const onCloseButtonClick = () => closeNotice();
 
   closeButtonElement.addEventListener('click', onCloseButtonClick);
   noticeElement.addEventListener('click', onNoticeClick);

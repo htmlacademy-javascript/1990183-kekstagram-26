@@ -30,7 +30,6 @@ const initializePosts = async () => {
 
   renderThumbnails(posts);
 
-  // писал в другом модуле, а зачем этот код здесь писать, а не в filter?
   const debouncedRenderThumbnails = debounce(renderThumbnails, DEBOUNCE_DELAY);
   initializeFilter(posts, debouncedRenderThumbnails);
 
@@ -38,12 +37,3 @@ const initializePosts = async () => {
 };
 
 initializePosts();
-
-/*
-  Замечания по ТЗ и общие
-  1. Не че не нарушает, но лучше поправить. После отправки фото, выходит попап
-     в котором есть кнопка "Круто" либо сделать не кнопкой, либо добавить обработчик
-     на закрытие попапа
-  Очень хороший код, намного выше среднестатистического студента, в целом я бы наверно
-  не отличил от кода написано практикующим разработчиком
-*/
