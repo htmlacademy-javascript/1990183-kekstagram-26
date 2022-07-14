@@ -43,23 +43,19 @@ const isMaxLengthValid = (string, maxLength) => (string.length <= maxLength);
 
 const isEscapeKey = (evt) => (evt.key === 'Escape');
 
-const debounce = (cb, delay) => {
+const debounce = (callback, delay) => {
   let timerId;
 
   return (...args) => {
     clearTimeout(timerId);
     timerId = setTimeout(
-      () => cb(...args),
+      () => callback(...args),
       delay
     );
   };
 };
 
 export {
-  // getRandomNumber нигде не используется кроме этого модуля
-  getRandomNumber,
-  // getRandomArrayElement  аналогично
-  getRandomArrayElement,
   getUniqueRandomArrayElements,
   isEscapeKey,
   isMaxLengthValid,
