@@ -3,6 +3,11 @@ import { showNotice } from './notice.js';
 const SERVER_URL = 'https://26.javascript.pages.academy/kekstagram';
 const ERROR_MESSAGE = 'Произошла ошибка, не удалось получить данные с сервера.';
 
+const failGettingData = () => {
+  showNotice(ERROR_MESSAGE);
+  return [];
+};
+
 const getData = async () => {
   let response;
 
@@ -10,11 +15,10 @@ const getData = async () => {
     response = await fetch(`${SERVER_URL}/data`);
 
     if (!response.ok) {
-      throw new Error(`${response.status} - ${response.statusText}`);
+      failGettingData();
     }
   } catch (error) {
-    showNotice(ERROR_MESSAGE);
-    return [];
+    failGettingData();
   }
 
   const data = await response.json();
@@ -34,9 +38,10 @@ const setData = async (form, onSuccess, onFail) => {
 
     if (response.ok) {
       onSuccess();
-    } else {
-      throw new Error(`${response.status} - ${response.statusText}`);
+      return;
     }
+
+    onFail();
   } catch (error) {
     onFail();
   }
