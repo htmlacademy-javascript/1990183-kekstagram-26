@@ -30,9 +30,9 @@ const createNotice = (config) => {
   };
 
   const onNoticeClick = (evt) => {
-    const noticeContainer = evt.target.closest(config.CONTAINER);
+    const noticeContainerElement = evt.target.closest(config.CONTAINER);
 
-    if (!noticeContainer) {
+    if (!noticeContainerElement) {
       closeNotice();
     }
   };
